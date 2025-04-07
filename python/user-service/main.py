@@ -1,0 +1,56 @@
+from fastapi import FastAPI, HTTPException, Depends
+from pydantic import BaseModel
+from typing import List, Optional
+import uvicorn
+
+app = FastAPI(title="User Management Service")
+
+# In-memory database
+users_db = []
+
+class User(BaseModel):
+    id: Optional[int] = None
+    username: str
+    email: str
+    full_name: str
+
+@app.get("/")
+async def root():
+    return {"message": "User Management Service is running"}
+
+@app.post("/users/", response_model=User)
+async def create_user(user: User):
+    user.id = len(users_db) + 1
+    users_db.append(user)
+    return user
+
+@app.get("/users/", response_model=List[User])
+async def get_users():
+    return users_db
+
+@app.get("/users/{user_id}", response_model=User)
+async def get_user(user_id: int):
+    for user in users_db:
+        if user.id == user_id:
+            return user
+    raise HTTPException(status_code=404, detail="User not found")
+
+@app.put("/users/{user_id}", response_model=User)
+async def update_user(user_id: int, updated_user: User):
+    for i, user in enumerate(users_db):
+        if user.id == user_id:
+            updated_user.id = user_id
+            users_db[i] = updated_user
+            return updated_user
+    raise HTTPException(status_code=404, detail="User not found")
+
+@app.delete("/users/{user_id}")
+async def delete_user(user_id: int):
+    for i, user in enumerate(users_db):
+        if user.id == user_id:
+            users_db.pop(i)
+            return {"message": "User deleted successfully"}
+    raise HTTPException(status_code=404, detail="User not found")
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True) 

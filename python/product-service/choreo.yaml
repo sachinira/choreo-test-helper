@@ -1,0 +1,16 @@
+component:
+  name: product-service
+  type: service
+  language: python
+  runtime: python-3.11
+  build:
+    commands:
+      - pip install -r requirements.txt
+  ports:
+    - 8001
+  healthCheck:
+    path: /
+    port: 8001
+  env:
+    - name: PORT
+      value: "8001" 

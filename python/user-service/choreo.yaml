@@ -1,0 +1,16 @@
+component:
+  name: user-service
+  type: service
+  language: python
+  runtime: python-3.11
+  build:
+    commands:
+      - pip install -r requirements.txt
+  ports:
+    - 8000
+  healthCheck:
+    path: /
+    port: 8000
+  env:
+    - name: PORT
+      value: "8000" 

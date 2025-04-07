@@ -1,0 +1,17 @@
+component:
+  name: payment-service
+  type: service
+  language: go
+  runtime: go-1.21
+  build:
+    commands:
+      - go mod download
+      - go build -o main
+  ports:
+    - 3001
+  healthCheck:
+    path: /
+    port: 3001
+  env:
+    - name: PORT
+      value: "3001" 

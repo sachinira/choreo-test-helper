@@ -1,0 +1,124 @@
+openapi: 3.0.0
+info:
+  title: Payment Service
+  description: API for managing payments
+  version: 1.0.0
+servers:
+  - url: http://localhost:3001
+    description: Local development server
+  - url: https://api.example.com
+    description: Production server
+
+paths:
+  /:
+    get:
+      summary: Health check endpoint
+      responses:
+        '200':
+          description: Service is running
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Payment Service is running
+
+  /payments:
+    post:
+      summary: Create a new payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Payment'
+      responses:
+        '201':
+          description: Payment created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+    get:
+      summary: Get all payments
+      responses:
+        '200':
+          description: List of payments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Payment'
+
+  /payments/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get payment by ID
+      responses:
+        '200':
+          description: Payment details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '404':
+          description: Payment not found
+
+  /payments/order/{order_id}:
+    parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get payments by order ID
+      responses:
+        '200':
+          description: List of payments for the order
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Payment'
+
+components:
+  schemas:
+    Payment:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Payment ID
+        order_id:
+          type: string
+          description: Order ID
+        amount:
+          type: number
+          format: float
+          description: Payment amount
+        status:
+          type: string
+          description: Payment status
+        method:
+          type: string
+          description: Payment method
+        timestamp:
+          type: string
+          format: date-time
+          description: Payment timestamp
+      required:
+        - order_id
+        - amount
+        - status
+        - method
+        - timestamp 
