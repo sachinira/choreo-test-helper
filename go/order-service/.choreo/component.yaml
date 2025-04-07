@@ -1,3 +1,4 @@
+schemaVersion: "1.2"
 component:
   name: order-service
   type: service
@@ -5,13 +6,12 @@ component:
   runtime: go-1.21
   build:
     commands:
-      - go mod download
       - go build -o main
   ports:
-    - 3000
+    - 8004
   healthCheck:
     path: /
-    port: 3000
+    port: 8004
   env:
     - name: PORT
-      value: "3000" 
+      value: "8004" 

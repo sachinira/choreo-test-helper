@@ -1,5 +1,6 @@
+schemaVersion: "1.2"
 component:
-  name: product-service
+  name: user-service
   type: service
   language: python
   runtime: python-3.11
@@ -7,10 +8,10 @@ component:
     commands:
       - pip install -r requirements.txt
   ports:
-    - 8001
+    - 8002
   healthCheck:
     path: /
-    port: 8001
+    port: 8002
   env:
     - name: PORT
-      value: "8001" 
+      value: "8002" 
