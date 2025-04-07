@@ -1,17 +1,12 @@
 schemaVersion: "1.2"
-component:
-  name: user-service
-  type: service
-  language: python
-  runtime: python-3.11
-  build:
-    commands:
-      - pip install -r requirements.txt
-  ports:
-    - 8002
-  healthCheck:
-    path: /
-    port: 8002
-  env:
-    - name: PORT
-      value: "8002" 
+endpoints:
+    - name: user-service-fe7
+      displayName: user-service
+      service:
+        basePath: /
+        port: 8002
+      type: REST
+      networkVisibilities:
+        - Project
+        - Public
+      schemaFilePath: openapi.yaml
