@@ -1,12 +1,16 @@
-schemaVersion: "1.2"
+schemaVersion: 1.2
+
 endpoints:
-    - name: product-service-1ee
-      displayName: product-service
-      service:
-        basePath: /
-        port: 8001
-      type: REST
-      networkVisibilities:
-        - Project
-        - Public
-      schemaFilePath: openapi.yaml
+  - name: product-service
+    displayName: Product Service
+    service:
+      basePath: /
+      port: 8001
+    type: REST
+    networkVisibilities:
+      - Public
+    schemaFilePath: openapi.yaml
+dependencies:
+    connectionReferences:
+    - name: OpenAIConnectionProject
+      resourceRef: thirdparty:GetAIOpenAITest/v1

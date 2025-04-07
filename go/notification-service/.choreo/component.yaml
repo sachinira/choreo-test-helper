@@ -1,17 +1,12 @@
-schemaVersion: "1.2"
-component:
-  name: notification-service
-  type: service
-  language: go
-  runtime: go-1.21
-  build:
-    commands:
-      - go build -o main
-  ports:
-    - 8005
-  healthCheck:
-    path: /
-    port: 8005
-  env:
-    - name: PORT
-      value: "8005" 
+schemaVersion: 1.2
+
+endpoints:
+    - name: notification-service
+      displayName: Notification Service
+      service:
+        basePath: /
+        port: 3001
+      type: REST
+      networkVisibilities:
+        - Public
+      schemaFilePath: openapi.yaml

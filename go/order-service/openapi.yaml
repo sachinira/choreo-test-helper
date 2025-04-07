@@ -1,1 +1,198 @@
- 
+openapi: 3.0.0
+info:
+  title: Order Service API
+  description: API for managing orders
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+paths:
+  /:
+    get:
+      summary: Health check endpoint
+      description: Returns a simple message indicating the service is running
+      responses:
+        '200':
+          description: Service is running
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Order Service is running"
+  /orders:
+    post:
+      summary: Create a new order
+      description: Creates a new order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '201':
+          description: Order created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Cannot parse JSON"
+    get:
+      summary: Get all orders
+      description: Retrieves all orders in the system
+      responses:
+        '200':
+          description: List of orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+  /orders/{id}:
+    get:
+      summary: Get a specific order
+      description: Retrieves an order by its ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Order not found"
+    put:
+      summary: Update an order
+      description: Updates an existing order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '200':
+          description: Order updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Cannot parse JSON"
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Order not found"
+    delete:
+      summary: Delete an order
+      description: Deletes an order by its ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Order deleted successfully"
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Order not found"
+components:
+  schemas:
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the order
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        user_id:
+          type: string
+          description: ID of the user who placed the order
+          example: "user123"
+        product_id:
+          type: string
+          description: ID of the product ordered
+          example: "product456"
+        quantity:
+          type: integer
+          description: Number of items ordered
+          example: 2
+        total_amount:
+          type: number
+          format: float
+          description: Total cost of the order
+          example: 99.99
+        status:
+          type: string
+          description: Current status of the order
+          example: "pending"
+      required:
+        - user_id
+        - product_id
+        - quantity
+        - total_amount
+        - status

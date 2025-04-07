@@ -1,17 +1,12 @@
-schemaVersion: "1.2"
-component:
-  name: payment-service
-  type: service
-  language: go
-  runtime: go-1.21
-  build:
-    commands:
-      - go build -o main
-  ports:
-    - 8003
-  healthCheck:
-    path: /
-    port: 8003
-  env:
-    - name: PORT
-      value: "8003" 
+schemaVersion: 1.2
+
+endpoints:
+    - name: payment-service
+      displayName: Payment Service
+      service:
+        basePath: /
+        port: 3000
+      type: REST
+      networkVisibilities:
+        - Public
+      schemaFilePath: openapi.yaml

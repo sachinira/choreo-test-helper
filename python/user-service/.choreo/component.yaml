@@ -1,12 +1,16 @@
-schemaVersion: "1.2"
+schemaVersion: 1.2
+
 endpoints:
-    - name: user-service-fe7
-      displayName: user-service
+    - name: user-service
+      displayName: User Service
       service:
         basePath: /
-        port: 8002
+        port: 8000
       type: REST
       networkVisibilities:
-        - Project
         - Public
       schemaFilePath: openapi.yaml
+dependencies:
+    connectionReferences:
+    - name: OpenAIConnectionProject
+      resourceRef: thirdparty:GetAIOpenAITest/v1
