@@ -1,6 +1,6 @@
 # User Management Service
 
-A FastAPI-based microservice for managing user data with CRUD operations.
+A FastAPI-based microservice for managing user data with CRUD operations and AI-powered question answering.
 
 ## Features
 
@@ -9,6 +9,7 @@ A FastAPI-based microservice for managing user data with CRUD operations.
 - Update existing users
 - Delete users
 - List all users
+- AI-powered question answering through OpenAI integration
 
 ## API Endpoints
 
@@ -18,6 +19,7 @@ A FastAPI-based microservice for managing user data with CRUD operations.
 - `GET /users/{user_id}` - Get a specific user by ID
 - `PUT /users/{user_id}` - Update a user
 - `DELETE /users/{user_id}` - Delete a user
+- `POST /ask` - Ask questions to the AI assistant
 
 ## User Model
 
@@ -30,10 +32,25 @@ A FastAPI-based microservice for managing user data with CRUD operations.
 }
 ```
 
+## Question Model
+
+```json
+{
+    "question": "string"
+}
+```
+
 ## Prerequisites
 
 - Python 3.7+
 - pip (Python package manager)
+- OpenAI API access (for AI question answering feature)
+
+## Environment Variables
+
+The service requires the following environment variables:
+- `CHOREO_OPENAICONNECTIONPROJECT_OPENAI_API_KEY`: Your OpenAI API key
+- `CHOREO_OPENAICONNECTIONPROJECT_SERVICEURL`: OpenAI service URL
 
 ## Installation
 
@@ -43,6 +60,7 @@ A FastAPI-based microservice for managing user data with CRUD operations.
    ```bash
    pip install -r requirements.txt
    ```
+4. Set up your environment variables in a `.env` file
 
 ## Running the Service
 
@@ -66,6 +84,7 @@ This service uses:
 - FastAPI for the web framework
 - Pydantic for data validation
 - Uvicorn as the ASGI server
+- OpenAI for AI-powered question answering
 
 ## Note
 

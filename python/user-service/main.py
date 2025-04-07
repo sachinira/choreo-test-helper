@@ -1,11 +1,15 @@
 import os
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
 import uvicorn
 import openai
+from dotenv import load_dotenv
 
 app = FastAPI(title="User Management Service")
+
+# Load environment variables
+load_dotenv()
 
 # In-memory database
 users_db = []
@@ -59,9 +63,9 @@ async def delete_user(user_id: int):
 
 @app.post("/ask")
 async def ask_question(question: Question):
+
     openai_api_key = os.getenv("CHOREO_OPENAICONNECTIONPROJECT_OPENAI_API_KEY")
     openai_base_url = os.getenv("CHOREO_OPENAICONNECTIONPROJECT_SERVICEURL")
-
     # Initialize OpenAI client
     client = openai.OpenAI(
         api_key=openai_api_key,
