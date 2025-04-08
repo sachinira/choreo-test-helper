@@ -1,77 +1,58 @@
-import ballerinax/github;
-import ballerinax/persist.googlesheets;
-import ballerina/time;
+import ballerinax/trigger.github;
+import ballerinax/googleapis.sheets as sheets;
+import ballerina/log;
+import ballerina/http;
 
 // Configuration for GitHub and Google Sheets
-configurable string githubToken = ?;
-configurable string googleSheetsCredentials = ?;
+type OAuth2RefreshTokenGrantConfig record {
+    string clientId;
+    string clientSecret;
+    string refreshToken;
+    string refreshUrl = "https://www.googleapis.com/oauth2/v3/token";
+};
+
+configurable github:ListenerConfig gitHubListenerConfig = ?; 
+
+listener http:Listener httpListener = check new(8090);
+listener github:Listener webhookListener = new(gitHubListenerConfig, httpListener);
+
+configurable OAuth2RefreshTokenGrantConfig sheetOauthConfig = ?;
 configurable string spreadsheetId = ?;
-configurable string sheetName = "PRs";
+configurable string worksheetName = ?;
 
-// Initialize GitHub client
-final github:Client githubClient = check new ({
-    auth: {
-        token: githubToken
+// Spreadsheet header constants
+final string[] & readonly headerValues = [
+    "Commit Author Name",
+    "Commit Author Email",
+    "Commit Message",
+    "Commit URL",
+    "Repository Name",
+    "Repository URL"
+];
+
+const int HEADINGS_ROW = 1;
+
+@display { label: "GitHub New PR to Google Sheets Row" }
+service github:PushService on webhookListener {
+    remote function onPush(github:PushEvent payload) returns error? {
+      sheets:Client spreadsheetClient = check new ({auth: {
+            clientId: sheetOauthConfig.clientId,
+            clientSecret: sheetOauthConfig.clientSecret,
+            refreshToken: sheetOauthConfig.refreshToken,
+            refreshUrl: sheetOauthConfig.refreshUrl            
+        }});
+
+        sheets:Row headers = check spreadsheetClient->getRow(spreadsheetId, worksheetName, HEADINGS_ROW);
+        if headers.values.length() == 0 {
+            check spreadsheetClient->appendRowToSheet(spreadsheetId, worksheetName, headerValues);
+        }
+
+        foreach var item in payload.commits {
+            (int|string|decimal)[] values = [item.author.name, item.author.email, item.message, item.url, payload.repository.name, payload.repository.url];
+            check spreadsheetClient->appendRowToSheet(spreadsheetId, worksheetName, values);
+        }
+        log:printInfo("Github new PR appended successfully!");
     }
-});
-
-// Initialize Google Sheets client
-final googlesheets:Client sheetsClient = check new ({
-    auth: {
-        credentials: googleSheetsCredentials
-    }
-});
-
-// Function to get all PRs created by the authenticated user
-function getMyPRs() returns github:PullRequest[]|error {
-    // Get the authenticated user's PRs
-    github:PullRequest[] prs = check githubClient->/search/issues.get({
-        q: "is:pr author:@me",
-        sort: "created",
-        order: "desc"
-    }).items;
-    return prs;
 }
 
-// Function to update Google Sheet with PR data
-function updateGoogleSheet(github:PullRequest[] prs) returns error? {
-    // Prepare data for the sheet
-    var sheetData = from var pr in prs
-        select {
-            "Title": pr.title,
-            "Repository": pr.repository.full_name,
-            "URL": pr.html_url,
-            "State": pr.state,
-            "Created At": pr.created_at,
-            "Updated At": pr.updated_at
-        };
-
-    // Update the Google Sheet
-    check sheetsClient->/spreadsheets/{spreadsheetId}/values/{sheetName}!A1:append.post({
-        valueInputOption: "USER_ENTERED",
-        insertDataOption: "INSERT_ROWS",
-        values: sheetData
-    });
-}
-
-// Scheduled task that runs daily
-@schedule:Schedule {
-    cron: "0 0 * * *"  // Runs at midnight every day
-}
-function runPRTracker() {
-    // Get PRs
-    github:PullRequest[]|error prs = getMyPRs();
-    if prs is error {
-        log:printError("Error fetching PRs", prs);
-        return;
-    }
-
-    // Update Google Sheet
-    error? result = updateGoogleSheet(prs);
-    if result is error {
-        log:printError("Error updating Google Sheet", result);
-        return;
-    }
-
-    log:printInfo("Successfully updated PRs in Google Sheet");
-} 
+service /ignore on httpListener {}

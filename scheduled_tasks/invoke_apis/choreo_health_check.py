@@ -23,8 +23,8 @@ ENDPOINTS = [
         'endpoints': [
             '/',
             '/users/',
-            '/users/1',
-            '/ask'
+            '/ask',
+            '/users/1'
         ]
     }
 ]
@@ -76,7 +76,7 @@ def run_health_checks():
                 if result['status'] == 'success':
                     logger.info(f"Check {i+1} for {endpoint}: Success (Status: {result['status_code']}, Response Time: {result['response_time']:.2f}s)")
                 else:
-                    logger.error(f"Check {i+1} for {endpoint}: Failed - {result.get('error', f'Status code: {result.get('status_code')}')}")
+                    logger.error(f"Check {i+1} for {endpoint}: Failed - {result['error']}, Status code: {result['status_code']}")
                 
                 # Wait 1 second between checks
                 time.sleep(1)

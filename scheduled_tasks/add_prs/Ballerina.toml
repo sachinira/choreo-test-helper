@@ -2,13 +2,4 @@
 org = "choreo"
 name = "github_pr_tracker"
 version = "0.1.0"
-
-[[platform.java11.dependency]]
-path = "./libs/github-connector-1.0.0.jar"
-
-[[platform.java11.dependency]]
-path = "./libs/googlesheets-connector-1.0.0.jar"
-
-[dependencies]
-"ballerinax/github" = "1.0.0"
-"ballerinax/persist.googlesheets" = "1.0.0" 
+distribution = "2201.7.4"
