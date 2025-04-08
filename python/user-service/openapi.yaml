@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: User Management Service
-  description: A simple user management service with CRUD operations
+  description: A simple user management service with CRUD operations and AI-powered question answering
   version: 1.0.0
 servers:
   - url: http://localhost:8000
@@ -55,16 +55,16 @@ paths:
                 $ref: '#/components/schemas/User'
 
   /users/{user_id}:
+    parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: ID of the user
     get:
       summary: Get user by ID
       description: Returns a specific user by their ID
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: integer
-          description: ID of the user to retrieve
       responses:
         '200':
           description: User retrieved successfully
@@ -85,13 +85,6 @@ paths:
     put:
       summary: Update user
       description: Updates an existing user's information
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: integer
-          description: ID of the user to update
       requestBody:
         required: true
         content:
@@ -118,13 +111,6 @@ paths:
     delete:
       summary: Delete user
       description: Deletes a user from the system
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          schema:
-            type: integer
-          description: ID of the user to delete
       responses:
         '200':
           description: User deleted successfully
@@ -147,6 +133,38 @@ paths:
                     type: string
                     example: "User not found"
 
+  /ask:
+    post:
+      summary: Ask a question to the AI assistant
+      description: Sends a question to the OpenAI API and returns the response
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Question'
+      responses:
+        '200':
+          description: Question answered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    type: string
+                    description: The AI's response to the question
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    description: Error message
+
 components:
   schemas:
     User:
@@ -168,4 +186,13 @@ components:
       required:
         - username
         - email
-        - full_name 
+        - full_name
+
+    Question:
+      type: object
+      properties:
+        question:
+          type: string
+          description: The question to ask the AI assistant
+      required:
+        - question 
