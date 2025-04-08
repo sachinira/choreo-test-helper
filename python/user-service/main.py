@@ -64,8 +64,8 @@ async def delete_user(user_id: int):
 @app.post("/ask")
 async def ask_question(question: Question):
 
-    openai_api_key = os.getenv("CHOREO_CONNECTIONFIXED1_OPENAI_API_KEY")
-    openai_base_url = os.getenv("CHOREO_CONNECTIONFIXED1_SERVICEURL")
+    openai_api_key = os.getenv("CHOREO_OPENAICONNECTIONPROJECT_OPENAI_API_KEY")
+    openai_base_url = os.getenv("CHOREO_OPENAICONNECTIONPROJECT_SERVICEURL")
     # Initialize OpenAI client
     client = openai.OpenAI(
         api_key=openai_api_key,
