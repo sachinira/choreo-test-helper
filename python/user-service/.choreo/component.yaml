@@ -12,5 +12,5 @@ endpoints:
       schemaFilePath: openapi.yaml
 dependencies:
     connectionReferences:
-    - name: ConnectionTest1
-      resourceRef: thirdparty:OpenAIService/v1
+    - name: OpenAIConnection1
+      resourceRef: thirdparty:OpenAITest1/v1
